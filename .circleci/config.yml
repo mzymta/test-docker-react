@@ -12,6 +12,9 @@ jobs:
       - image: cimg/node:16.13.2
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
       - run:
           name: Install dependencies
           command: docker build --target deps . -t mzymta/react-test
@@ -23,6 +26,9 @@ jobs:
       - image: cimg/node:16.13.2
     steps:
       - checkout
+      - setup_remote_docker:
+          version: 20.10.12
+          docker_layer_caching: true
       - run:
           name: Build
           command: docker build --target builder . -t mzymta/react-test
