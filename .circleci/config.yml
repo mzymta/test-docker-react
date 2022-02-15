@@ -3,11 +3,11 @@ version: 2.1
 
 # Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
 # See: https://circleci.com/docs/2.0/orb-intro/
-orbs:
-  node: circleci/node@5.0.0
+# orbs:
+#  node: circleci/node@5.0.0
 
 jobs:
-  unit:
+  install_dependencies:
     docker:
       - image: cimg/node:16.13.2
     steps:
@@ -24,9 +24,14 @@ jobs:
           key: dependency-cache-{{ checksum "package-lock.json" }}
           paths:
             - ./node_modules
+  unit:
+    steps:
+      - checkout
       - run:
           name: Run tests
           command: npm run test
+    requires:
+      - install_dependencies
 
 
 # Invoke jobs via workflows
@@ -34,13 +39,7 @@ jobs:
 workflows:
   prebuild:
     jobs:
-      - node/test:
-          # This is the node version to use for the `cimg/node` tag
-          # Relevant tags can be found on the CircleCI Developer Hub
-          # https://circleci.com/developer/images/image/cimg/node
-          version: '16.13.2'
-          # If you are using yarn, change the line below from "npm" to "yarn"
-          pkg-manager: npm
+      - install_dependencies
       - unit
 
 
