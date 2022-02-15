@@ -12,7 +12,7 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - v1-{{ .Branch }}-{{ .Revision }}
+            - v1-{{ .Branch }}
           paths:
             - /caches/app.tar
       - run:
@@ -29,27 +29,30 @@ commands:
             sudo mkdir -p /caches
             docker save -o /caches/app.tar app
       - save_cache:
-          key: v1-{{ .Branch }}-{{ .Revision }}
+          key: v1-{{ .Branch }}
           paths:
             - /caches/app.tar
 
 
 jobs:
   unit_testing:
+    working_directory: /app
     docker:
       - image: cimg/node:16.13.2
     steps:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
+      - restore_image
       - run:
           name: Install dependencies
-          command: docker build --target deps . -t app
+          command: docker build --cache-from=app --target deps . -t app
       - save_image
       - run:
           name: Run tests
           command: docker run app npm run test:ci
   build:
+    working_directory: /app
     docker:
       - image: mzymta/react-test
     steps:
