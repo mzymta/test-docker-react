@@ -37,11 +37,10 @@ commands:
 jobs:
   unit_testing:
     docker:
-      - image: cimg/node:16.13.2
+      - image: cimg/base:2021.04
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 19.03.13
+      - setup_remote_docker
       - restore_image
       - run:
           name: Install dependencies
@@ -55,11 +54,10 @@ jobs:
           command: docker run app npm run test:ci
   build:
     docker:
-      - image: mzymta/react-test
+      - image: cimg/base:2021.04
     steps:
       - checkout
-      - setup_remote_docker:
-          version: 19.03.13
+      - setup_remote_docker
       - restore_image
       - run:
           name: Build
