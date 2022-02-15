@@ -1,7 +1,12 @@
-FROM node:16-alpine as builder
+FROM node:16-alpine as deps
 WORKDIR /usr/temp/app
 COPY ./package*.json .
 RUN npm install
+COPY . .
+
+FROM node:16-alpine as builder
+WORKDIR /usr/temp/app
+COPY --from=deps /usr/temp/app/node_modules ./node_modules
 COPY . .
 RUN npm run build
 
