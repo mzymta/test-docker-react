@@ -7,32 +7,32 @@ persist_to_workspace:
     - cache
 
 commands:
-  commands:
-    restoreImage:
-      description: restore docker image from cache
-      steps:
-        - restore_cache:
-            keys:
-              - v1-{{ .Branch }}-{{ .Revision }}
-            paths:
-              - /caches/app.tar
-        - run:
-            name: Load Docker image layer cache
-            command: |
-              set +o pipefail
-              docker load -i /caches/app.tar | true
-    saveImage:
-      description: save docker image to cache
-      steps:
-        - run:
-            name: Save Docker image layer cache
-            command: |
-              mkdir -p /caches
-              docker save -o /caches/app.tar app
-        - save_cache:
-            key: v1-{{ .Branch }}-{{ .Revision }}
-            paths:
-              - /caches/app.tar
+  restore_image:
+    description: restore docker image from cache
+    steps:
+      - restore_cache:
+          keys:
+            - v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - /caches/app.tar
+      - run:
+          name: Load Docker image layer cache
+          command: |
+            set +o pipefail
+            docker load -i /caches/app.tar | true
+  save_image:
+    description: save docker image to cache
+    steps:
+      - run:
+          name: Save Docker image layer cache
+          command: |
+            mkdir -p /caches
+            docker save -o /caches/app.tar app
+      - save_cache:
+          key: v1-{{ .Branch }}-{{ .Revision }}
+          paths:
+            - /caches/app.tar
+
 
 jobs:
   unit_testing:
@@ -45,7 +45,7 @@ jobs:
       - run:
           name: Install dependencies
           command: docker build --target deps . -t app
-      - saveImage
+      - save_image
       - run:
           name: Run tests
           command: docker run app npm run test:ci
@@ -56,11 +56,11 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
-      - restoreImage
+      - restore_image
       - run:
           name: Build
           command: docker build --cache-from=app --target builder . -t app
-      - saveImage
+      - save_image
 
 
 # Invoke jobs via workflows
