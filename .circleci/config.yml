@@ -13,7 +13,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.12
+          version: 19.03.13
       - run:
           name: Install dependencies
           command: docker build --target deps . -t mzymta/react-test
@@ -26,7 +26,7 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker:
-          version: 20.10.12
+          version: 19.03.13
       - run:
           name: Build
           command: docker build --target builder . -t mzymta/react-test
