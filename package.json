@@ -12,6 +12,9 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "docker-dev": "docker-compose up --build",
+    "docker-test": "docker-compose run tests",
+    "docker-tests-in-ui": "docker-compose run ui npm run test",
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

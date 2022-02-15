@@ -1,0 +1,18 @@
+services:
+  ui:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - 3000:3000
+    volumes:
+      - .:/usr/app
+  tests:
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    volumes:
+      - .:/usr/app
+    command: npm run test
