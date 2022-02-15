@@ -17,8 +17,8 @@
     "docker-tests-in-ui": "docker-compose run ui npm run test",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test:watch": "react-scripts test",
-    "test": "react-scripts test -- --watchAll=false",
+    "test": "react-scripts test",
+    "test:ci": "CI=true react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -38,5 +38,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "jest-watch-typeahead": "^0.6.5"
   }
 }

@@ -19,7 +19,7 @@ jobs:
           command: docker build --target deps . -t mzymta/react-test
       - run:
           name: Run tests
-          command: docker run mzymta/react-test npm run test
+          command: docker run mzymta/react-test npm run test:ci
   build:
     docker:
       - image: cimg/node:16.13.2
