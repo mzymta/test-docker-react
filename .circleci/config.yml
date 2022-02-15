@@ -14,31 +14,30 @@ commands:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - /caches/app.tar
+            - /usr/caches/app.tar
       - run:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i /caches/app.tar | true
+            docker load -i /usr/caches/app.tar | true
   save_image:
     description: save docker image to cache
     steps:
       - run:
           name: Save Docker image layer cache
           command: |
-            sudo mkdir -p /caches
-            docker save -o /caches/app.tar app
+            sudo mkdir -p /usr/caches
+            docker save -o /usr/caches/app.tar app
       - save_cache:
           key: v1-{{ .Branch }}
           paths:
-            - /caches/app.tar
+            - /usr/caches/app.tar
 
 
 jobs:
   unit_testing:
     docker:
       - image: cimg/node:16.13.2
-    working_directory: /app
     steps:
       - checkout
       - setup_remote_docker:
@@ -57,7 +56,6 @@ jobs:
   build:
     docker:
       - image: mzymta/react-test
-    working_directory: /app
     steps:
       - checkout
       - setup_remote_docker:
