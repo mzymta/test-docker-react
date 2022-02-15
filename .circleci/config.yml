@@ -25,13 +25,13 @@ jobs:
           paths:
             - ./node_modules
   unit:
+    docker:
+      - image: cimg/node:16.13.2
     steps:
       - checkout
       - run:
           name: Run tests
           command: npm run test
-    requires:
-      - install_dependencies
 
 
 # Invoke jobs via workflows
@@ -40,6 +40,8 @@ workflows:
   prebuild:
     jobs:
       - install_dependencies
-      - unit
+      - unit:
+          requires:
+            - install_dependencies
 
 
