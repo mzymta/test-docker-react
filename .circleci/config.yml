@@ -1,10 +1,38 @@
 # This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 
-# Orbs are reusable packages of CircleCI configuration that you may share across projects, enabling you to create encapsulated, parameterized commands, jobs, and executors that can be used across multiple projects.
-# See: https://circleci.com/docs/2.0/orb-intro/
-# orbs:
-#  node: circleci/node@5.0.0
+persist_to_workspace:
+  root: ./
+  paths:
+    - cache
+
+commands:
+  commands:
+    restoreImage:
+      description: restore docker image from cache
+      steps:
+        - restore_cache:
+            keys:
+              - v1-{{ .Branch }}-{{ .Revision }}
+            paths:
+              - /caches/app.tar
+        - run:
+            name: Load Docker image layer cache
+            command: |
+              set +o pipefail
+              docker load -i /caches/app.tar | true
+    saveImage:
+      description: save docker image to cache
+      steps:
+        - run:
+            name: Save Docker image layer cache
+            command: |
+              mkdir -p /caches
+              docker save -o /caches/app.tar app
+        - save_cache:
+            key: v1-{{ .Branch }}-{{ .Revision }}
+            paths:
+              - /caches/app.tar
 
 jobs:
   unit_testing:
@@ -16,7 +44,8 @@ jobs:
           version: 19.03.13
       - run:
           name: Install dependencies
-          command: docker build --target deps . -t mzymta/react-test
+          command: docker build --target deps . -t app
+      - saveImage
       - run:
           name: Run tests
           command: docker run mzymta/react-test npm run test:ci
@@ -27,9 +56,11 @@ jobs:
       - checkout
       - setup_remote_docker:
           version: 19.03.13
+      - restoreImage
       - run:
           name: Build
-          command: docker build --target builder . -t mzymta/react-test
+          command: docker build --cache-from=app --target builder . -t mzymta/react-test
+      - saveImage
 
 
 # Invoke jobs via workflows
