@@ -7,9 +7,7 @@ orbs:
   node: circleci/node@5.0.0
 
 jobs:
-  unit-test:
-    docker:
-      - image: circleci/node:16.13.2
+  unit:
     steps:
       - checkout
       - run:
@@ -41,6 +39,6 @@ workflows:
           version: '16.13.2'
           # If you are using yarn, change the line below from "npm" to "yarn"
           pkg-manager: npm
-      - unit-test
+      - unit
 
 
