@@ -48,7 +48,7 @@ jobs:
       - saveImage
       - run:
           name: Run tests
-          command: docker run mzymta/react-test npm run test:ci
+          command: docker run app npm run test:ci
   build:
     docker:
       - image: mzymta/react-test
@@ -59,7 +59,7 @@ jobs:
       - restoreImage
       - run:
           name: Build
-          command: docker build --cache-from=app --target builder . -t mzymta/react-test
+          command: docker build --cache-from=app --target builder . -t app
       - saveImage
 
 
