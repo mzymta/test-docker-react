@@ -45,6 +45,8 @@ jobs:
       - run:
           name: Run tests
           command: docker run react-test npm run test:ci
+      - store_test_results:
+          path: /test-results/jest/
   build:
     docker:
       - image: cimg/base:2021.04
