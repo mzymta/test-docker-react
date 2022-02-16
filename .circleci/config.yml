@@ -1,6 +1,9 @@
 # This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 
+#orbs:
+#  aws-elastic-beanstalk: circleci/aws-elastic-beanstalk@2.0.1
+
 commands:
   restore_image:
     description: restore docker image from cache
@@ -55,7 +58,7 @@ jobs:
       - restore_image
       - run:
           name: Build
-          command: docker build --cache-from=react-test --target builder . -t react-test
+          command: docker build --cache-from=react-test . -t react-test
       - save_image
 
 # Invoke jobs via workflows
@@ -63,11 +66,15 @@ jobs:
 workflows:
   test_build_deploy:
     jobs:
-      - intall_dependencies
+      - intall_dependencies:
+          filters:
+            branches:
+              only: main
       - unit_testing:
           requires:
             - intall_dependencies
       - build:
           requires:
-            - intall_dependencies
             - unit_testing
+
+# bucket elasticbeanstalk-us-east-1-862165211562
