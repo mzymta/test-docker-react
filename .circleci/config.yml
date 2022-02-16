@@ -74,5 +74,5 @@ workflows:
           filters:
             branches:
               only:
-                - master
+                - main
           label: version-<<pipeline.number>>
