@@ -12,17 +12,17 @@ commands:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i /tmp/workspace/app.tar | true
+            docker load -i /tmp/workspace/react-test.tar | true
   save_image:
     description: save docker image to cache
     steps:
       - run:
           name: Save Docker image layer cache
-          command: docker save -o app.tar app
+          command: docker save -o react-test.tar react-test
       - persist_to_workspace:
           root: .
           paths:
-            - ./app.tar
+            - ./react-test.tar
 
 jobs:
   unit_testing:
@@ -33,14 +33,14 @@ jobs:
       - restore_image
       - run:
           name: Install dependencies
-          command: docker build --cache-from=app --target deps . -t app
+          command: docker build --cache-from=react-test --target deps . -t react-test
       - run:
           name: LIST THE DIR CONTENT
           command: echo $(ls)
       - save_image
       - run:
           name: Run tests
-          command: docker run app npm run test:ci
+          command: docker run react-test npm run test:ci
   build:
     docker:
       - image: cimg/base:2021.04
@@ -49,7 +49,7 @@ jobs:
       - restore_image
       - run:
           name: Build
-          command: docker build --cache-from=app --target builder . -t app
+          command: docker build --cache-from=react-test --target builder . -t react-test
       - save_image
   build2:
     docker:
@@ -59,7 +59,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Build
-          command: docker build --target builder . -t app
+          command: docker build --target builder . -t react-test
 
 
 
