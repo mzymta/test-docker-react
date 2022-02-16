@@ -26,7 +26,7 @@ commands:
             - ./react-test.tar
 
 jobs:
-  unit_testing:
+  intall_dependencies:
     docker:
       - image: cimg/base:2021.04
     steps:
@@ -35,10 +35,13 @@ jobs:
       - run:
           name: Install dependencies
           command: docker build --cache-from=react-test --target deps . -t react-test
-      - run:
-          name: LIST THE DIR CONTENT
-          command: echo $(ls)
       - save_image
+  unit_testing:
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - checkout
+      - restore_image
       - run:
           name: Run tests
           command: docker run react-test npm run test:ci
@@ -52,25 +55,17 @@ jobs:
           name: Build
           command: docker build --cache-from=react-test --target builder . -t react-test
       - save_image
-  build2:
-    docker:
-      - image: cimg/base:2021.04
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 19.03.13
-      - run:
-          name: Build
-          command: docker build --target builder . -t react-test
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  pipeline:
+  test_build_deploy:
     jobs:
-      - unit_testing
+      - intall_dependencies
+      - unit_testing:
+          requires:
+            - intall_dependencies
       - build:
           requires:
+            - intall_dependencies
             - unit_testing
-
-
