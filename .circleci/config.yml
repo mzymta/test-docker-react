@@ -67,16 +67,6 @@ jobs:
 workflows:
   test_build_deploy:
     jobs:
-      - intall_dependencies:
-          filters:
-            branches:
-              only: main
-      - unit_testing:
-          requires:
-            - intall_dependencies
-      - build:
-          requires:
-            - unit_testing
       - aws-elastic-beanstalk/deploy:
           context: aws-creds
           application-name: react-test
@@ -86,7 +76,3 @@ workflows:
               only:
                 - master
           label: version-<<pipeline.number>>
-          requires:
-            - build
-
-# bucket elasticbeanstalk-us-east-1-862165211562
