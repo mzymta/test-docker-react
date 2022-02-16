@@ -4,7 +4,7 @@ version: 2.1
 persist_to_workspace:
   root: ./
   paths:
-    - caches
+    - app.tar
 
 commands:
   restore_image:
@@ -14,24 +14,22 @@ commands:
           keys:
             - v1-{{ .Branch }}
           paths:
-            - /caches/app.tar
+            - /app.tar
       - run:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i /caches/app.tar | true
+            docker load -i /app.tar | true
   save_image:
     description: save docker image to cache
     steps:
       - run:
           name: Save Docker image layer cache
-          command: |
-            sudo mkdir -p /caches
-            sudo docker save -o /caches/app.tar app
+          command: docker save -o /app.tar app
       - save_cache:
           key: v1-{{ .Branch }}
           paths:
-            - /caches/app.tar
+            - /app.tar
 
 
 jobs:
