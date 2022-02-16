@@ -51,6 +51,16 @@ jobs:
           name: Build
           command: docker build --cache-from=app --target builder . -t app
       - save_image
+  build2:
+    docker:
+      - image: cimg/base:2021.04
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          name: Build
+          command: docker build --target builder . -t app
+
 
 
 # Invoke jobs via workflows
@@ -58,9 +68,6 @@ jobs:
 workflows:
   pipeline:
     jobs:
-      - unit_testing
-      - build:
-          requires:
-            - unit_testing
+      - build2
 
 
