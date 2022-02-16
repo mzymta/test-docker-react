@@ -1,36 +1,28 @@
 # This config is equivalent to both the '.circleci/extended/orb-free.yml' and the base '.circleci/config.yml'
 version: 2.1
 
-persist_to_workspace:
-  root: ./
-  paths:
-    - app.tar
-
 commands:
   restore_image:
     description: restore docker image from cache
     steps:
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /app.tar
+      - attach_workspace:
+          at: /tmp/workspace
+      - setup_remote_docker
       - run:
           name: Load Docker image layer cache
           command: |
             set +o pipefail
-            docker load -i /app.tar | true
+            docker load -i /tmp/workspace/app.tar | true
   save_image:
     description: save docker image to cache
     steps:
       - run:
           name: Save Docker image layer cache
-          command: docker save -o /app.tar app
-      - save_cache:
-          key: v1-{{ .Branch }}
+          command: docker save -o app.tar app
+      - persist_to_workspace:
+          root: .
           paths:
-            - /app.tar
-
+            - ./app.tar
 
 jobs:
   unit_testing:
@@ -38,7 +30,6 @@ jobs:
       - image: cimg/base:2021.04
     steps:
       - checkout
-      - setup_remote_docker
       - restore_image
       - run:
           name: Install dependencies
@@ -55,7 +46,6 @@ jobs:
       - image: cimg/base:2021.04
     steps:
       - checkout
-      - setup_remote_docker
       - restore_image
       - run:
           name: Build
