@@ -63,13 +63,14 @@ jobs:
           name: Build
           command: docker build --target builder . -t react-test
 
-
-
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   pipeline:
     jobs:
-      - build2
+      - unit_testing
+      - build:
+          requires:
+            - unit_testing
 
 
