@@ -67,11 +67,19 @@ jobs:
 workflows:
   test_build_deploy:
     jobs:
-      - aws-elastic-beanstalk/deploy:
-          application-name: react-test
-          environment-name: Reacttest-env
+      - intall_dependencies:
           filters:
             branches:
-              only:
-                - main
+              only: main
+      - unit_testing:
+          requires:
+            - intall_dependencies
+      - build:
+          requires:
+            - unit_testing
+      - aws-elastic-beanstalk/deploy:
+          requires:
+            - build
+          application-name: react-test
+          environment-name: Reacttest-env
           label: version-<<pipeline.number>>
