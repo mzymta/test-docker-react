@@ -68,7 +68,6 @@ workflows:
   test_build_deploy:
     jobs:
       - aws-elastic-beanstalk/deploy:
-          context: aws-creds
           application-name: react-test
           environment-name: Reacttest-env
           filters:
